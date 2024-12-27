@@ -12,17 +12,54 @@ using OpenTK.Graphics;
 namespace UIFramework
 {
     /// <summary>
+    /// Static manager class responsible for setting up and maintaining the framework window.
+    /// </summary>
+    public static class Framework
+    {
+        public static MainWindow MainWindow => _window.MainWindow;
+
+        private static FrameworkWindow _window;
+
+        public static void Init(MainWindow window, GraphicsMode gMode, string assemblyVersion, string name = "MAP_STUDIO", int width = 1600, int height = 900)
+        {
+            var title = $"{TranslationSource.GetText(name)} Version: {assemblyVersion}";
+
+            _window = new FrameworkWindow(window, gMode, title, width, height);
+
+            // after gl has been initialized, add its version to the title
+            _window.Title += $": {TranslationSource.GetText("OPENGL_VERSION")}: {GL.GetString(StringName.Version)}";
+
+            _window.Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+            _window.VSync = VSyncMode.On;
+        }
+
+        public static void RunWindow()
+        {
+            if (_window == null)
+                throw new Exception("Tried to run Framework Window before it was initialized!");
+
+            _window.Run();
+        }
+
+        /// <summary>
+        /// Used to programmatically drop a file path on the current main window.
+        /// </summary>
+        /// <param name="filePath">Path to send to main window before the next frame.</param>
+        public static void QueueWindowFileDrop(string filePath) => UIManager.ActionExecBeforeUIDraw = () => MainWindow.OnFileDrop(filePath);
+    }
+
+    /// <summary>
     /// Represents the framework backend to run the UI.
     /// </summary>
-    public class Framework : GameWindow
+    public class FrameworkWindow : GameWindow
     {
-        MainWindow MainWindow;
-        ImGuiController _controller;
-        ProcessLoading ProcessLoading = null;
+        public MainWindow MainWindow;
+        private ImGuiController _controller;
+        private ProcessLoading ProcessLoading = null;
 
-        public Framework(MainWindow window, GraphicsMode gMode, string asssemblyVersion,
-            string name = "TRACK_STUDIO", int width = 1600, int height = 900) : base(width, height, gMode,
-                             TranslationSource.GetText(name),
+        public FrameworkWindow(MainWindow window, GraphicsMode gMode,
+            string name, int width = 1600, int height = 900) : base(width, height, gMode,
+                             name,
                              GameWindowFlags.Default,
                              DisplayDevice.Default,
                              3, 2, GraphicsContextFlags.Default)
@@ -34,7 +71,7 @@ namespace UIFramework
             {
                 try
                 {
-                    WindowsThemeUtil.Init(this.WindowInfo.Handle);
+                    WindowsThemeUtil.Init(WindowInfo.Handle);
                 }
                 catch
                 {
@@ -43,15 +80,10 @@ namespace UIFramework
             }));
             Thread.Start();
 
-
-            Title += $" Version: {asssemblyVersion}";
-            Title += $": {TranslationSource.GetText("OPENGL_VERSION")}: " + GL.GetString(StringName.Version);
-
-
             ProcessLoading = new ProcessLoading();
             ProcessLoading.OnUpdated += delegate
             {
-                this.Update();
+                Update();
             };
         }
 
