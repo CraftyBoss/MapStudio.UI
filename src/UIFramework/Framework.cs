@@ -29,7 +29,7 @@ namespace UIFramework
             // after gl has been initialized, add its version to the title
             _window.Title += $": {TranslationSource.GetText("OPENGL_VERSION")}: {GL.GetString(StringName.Version)}";
 
-            _window.Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+            _window.Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetEntryAssembly().Location);
             _window.VSync = VSyncMode.On;
         }
 
