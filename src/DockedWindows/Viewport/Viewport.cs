@@ -523,10 +523,6 @@ namespace MapStudio.UI
 
             menus.Add(new MenuItemModel($"   {IconManager.UNDO_ICON}    {TranslationSource.GetText("UNDO")}", () => Pipeline._context.Scene.Undo()));
             menus.Add(new MenuItemModel($"   {IconManager.REDO_ICON}    {TranslationSource.GetText("REDO")}", () => Pipeline._context.Scene.Redo()));
-            menus.Add(new MenuItemModel(""));
-            menus.Add(new MenuItemModel($"   {IconManager.COPY_ICON}    {TranslationSource.GetText("COPY")}", Pipeline._context.Scene.CopySelected));
-            menus.Add(new MenuItemModel($"   {IconManager.PASTE_ICON}    {TranslationSource.GetText("PASTE")}", Pipeline._context.Scene.PasteSelected));
-            menus.Add(new MenuItemModel($"   {IconManager.DELETE_ICON}    {TranslationSource.GetText("REMOVE")}", Pipeline._context.Scene.DeleteSelected));
 
             return menus;
         }
