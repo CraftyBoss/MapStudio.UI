@@ -75,7 +75,7 @@ namespace MapStudio.UI
                 return;
 
             ImGui.PushStyleColor(ImGuiCol.Text, color);
-            ImGui.TextWrapped(text);
+            WriteText(text);
             ImGui.PopStyleColor();
         }
     }
